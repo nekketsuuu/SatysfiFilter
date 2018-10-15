@@ -21,9 +21,10 @@ elemUpTo query target = elem (toL query) (map toL target)
 
 convertBlock :: Attr -> String -> Block
 convertBlock (id, classes, namevals) contents =
-  CodeBlock (id, classes, namevals) ("% modified\n" ++ displayContents)
+  Div nullAttr [codeBlock]
   where
     displayContents = snipCode contents
+    codeBlock = CodeBlock (id, classes, namevals) displayContents
 
 snipCode :: String -> String
 snipCode contents =

@@ -1,0 +1,7 @@
+# backup files
+*~
+
+# compilation results
+*.hi
+*.o
+/pandoc/satysfiFilter

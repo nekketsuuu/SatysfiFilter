@@ -1,7 +1,6 @@
 GHC = stack ghc --
 PANDOC = pandoc
 
-.PHONY: all test
 all: test
 test: test/test.html
 
@@ -12,5 +11,6 @@ test/test.html: test/test.md satysfiFilter
 satysfiFilter: satysfiFilter.hs
 	$(GHC) --make -o $@ $^
 
+.PHONY: clean
 clean:
 	rm -f satysfiFilter test/test.html

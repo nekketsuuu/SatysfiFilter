@@ -35,6 +35,7 @@ checkCommands (cmd:cmds) = do
     Nothing -> error $ "Command \"" ++ cmd ++ "\" does not exist"
 
 -- TODO(nekketsuuu): padding zeros
+-- TODO(nekketsuuu): use hash value?
 getFileBasename :: CodeId -> IO String
 getFileBasename codeId = do
   id <- readIORef codeId

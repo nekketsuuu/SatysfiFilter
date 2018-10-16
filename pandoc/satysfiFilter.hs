@@ -35,13 +35,14 @@ snipCode contents =
     begin = 1 + (fromMaybe (-1) $ findIndex (\l -> isSpecialComment "BEGIN" l) ls)
     end = fromMaybe (1 + length ls) $ findIndex (\l -> isSpecialComment "END" l) ls
 
+-- True if a given line matches r'^[\s]*%%[\s]*TAG.*'
 isSpecialComment :: String -> String -> Bool
-isSpecialComment tag str = isDoublePercent && isTag
+isSpecialComment tag line = isDoublePercent && isTag
   where
-    (isDoublePercent, strTag) = getTag str
+    (isDoublePercent, strTag) = getTag line
     isTag = tag `isPrefixOf` strTag
-    str' = dropHeadSpaces str
-    (head2, rest) = (take 2 str', drop 2 str')
+    line' = dropHeadSpaces line
+    (head2, rest) = (take 2 line', drop 2 line')
     getTag str =
       if head2 == "%%" then (True, dropHeadSpaces rest)
       else (False, "")

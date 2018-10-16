@@ -32,6 +32,22 @@ snipCode contents =
   where
     ls = lines contents
     slice from to xs = take (to - from) $ drop from $ xs
-    -- TODO(nekketsuuu): use regexp to allow any number of spaces
-    begin = 1 + (fromMaybe (-1) $ findIndex (\l -> isInfixOf "%% BEGIN" l) ls)
-    end = fromMaybe (1 + length ls) $ findIndex (\l -> isInfixOf "%% END" l) ls
+    begin = 1 + (fromMaybe (-1) $ findIndex (\l -> isSpecialComment "BEGIN" l) ls)
+    end = fromMaybe (1 + length ls) $ findIndex (\l -> isSpecialComment "END" l) ls
+
+isSpecialComment :: String -> String -> Bool
+isSpecialComment tag str = isDoublePercent && isTag
+  where
+    (isDoublePercent, strTag) = getTag str
+    isTag = tag `isPrefixOf` strTag
+    str' = dropHeadSpaces str
+    (head2, rest) = (take 2 str', drop 2 str')
+    getTag str =
+      if head2 == "%%" then (True, dropHeadSpaces rest)
+      else (False, "")
+
+dropHeadSpaces :: String -> String
+dropHeadSpaces "" = ""
+dropHeadSpaces (x:xs)
+  | isSpace x = dropHeadSpaces xs
+  | otherwise = x:xs

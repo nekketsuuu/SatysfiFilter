@@ -6,3 +6,4 @@
 *.o
 /pandoc/satysfiFilter
 /pandoc/test/test.html
+/pandoc/test/compiled

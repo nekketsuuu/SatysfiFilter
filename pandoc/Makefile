@@ -10,12 +10,12 @@ all: test
 test: test/test.html
 
 test/test.html: test/test.md satysfiFilter
-	pandoc -f markdown -t html --filter ./satysfiFilter -o $@ $<
-	cat $@
+	cd test \
+	&& pandoc -f markdown -t html --filter ../satysfiFilter -o test.html test.md
 
 satysfiFilter: $(SRC)
 	$(GHC) --make -o $@ $<
 
 .PHONY: clean
 clean:
-	rm -f satysfiFilter test/test.html
+	rm -rf satysfiFilter test/test.html test/compiled

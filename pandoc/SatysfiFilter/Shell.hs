@@ -6,7 +6,7 @@ module SatysfiFilter.Shell (
   checkCommands,
   compileCode,
   generateImg,
-  getCodeBasename,
+  getFileBasename,
   getImgFilename,
   getSatysfiVersion,
   saveCode,
@@ -17,6 +17,7 @@ import Data.IORef
 import qualified Data.Text as T
 import Shelly
 import System.Directory
+import qualified System.FilePath as FP
 
 import SatysfiFilter.Config
 
@@ -34,27 +35,36 @@ checkCommands (cmd:cmds) = do
     Nothing -> error $ "Command \"" ++ cmd ++ "\" does not exist"
 
 -- TODO(nekketsuuu): padding zeros
-getCodeBasename :: CodeId -> IO String
-getCodeBasename codeId = do
+getFileBasename :: CodeId -> IO String
+getFileBasename codeId = do
   id <- readIORef codeId
   return $ "output" ++ (show id)
 
+getSatyFilename :: String -> String
+getSatyFilename base = base ++ ".saty"
+
+getSatyPath :: String -> String
+getSatyPath base = outputDir FP.</> getSatyFilename base
+
 getImgFilename :: String -> String
 getImgFilename codeBasename = codeBasename ++ "." ++ imgFormat
+
+getImgPath :: String -> String
+getImgPath base = outputDir FP.</> getImgFilename base
 
 getSatysfiVersion :: IO Version
 getSatysfiVersion = do
   shOut <- shelly $ silently $ run "satysfi" ["-v"]
   return $ T.unpack $ T.strip shOut
 
--- TODO(nekketsuuu): implement
 saveCode :: String -> String -> IO ()
-saveCode codeBasename contents = return ()
+saveCode basename contents =
+  writeFile (getSatyPath basename) contents
 
 -- TODO(nekketsuuu): implement
 compileCode :: String -> IO ()
-compileCode codeBasename = return ()
+compileCode basename = return ()
 
 -- TODO(nekketsuuu): implement
 generateImg :: String -> IO ()
-generateImg codeBasename = return ()
+generateImg basename = return ()

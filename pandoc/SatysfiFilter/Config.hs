@@ -1,7 +1,7 @@
 module SatysfiFilter.Config (
   CodeId,
   Version,
-  imgDir,
+  outputDir,
   imgFormat
   ) where
 
@@ -11,8 +11,8 @@ type Version = String
 type CodeId = IORef Integer
 
 -- TODO(nekketsuuu): ad-hoc
-imgDir :: String
-imgDir = "./compiled"
+outputDir :: String
+outputDir = "compiled"
 
 imgFormat :: String
 imgFormat = "png"

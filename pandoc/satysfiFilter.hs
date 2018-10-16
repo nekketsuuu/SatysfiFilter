@@ -3,6 +3,8 @@ import Data.List
 import Data.Maybe
 import Text.Pandoc.JSON
 
+-- TODO(nekketsuuu): Use Data.Text instead of String
+
 main :: IO ()
 main = toJSONFilter doFilter
 

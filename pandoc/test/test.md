@@ -9,8 +9,8 @@ This file is for testing.
 document (|
   title = {test};
   author = {nekketsuuu};
-  show-title = false;
-  show-toc = false;
+|) ?:(|
+  show-pages = false;
 |) '<
   +p {
     Testing!
@@ -34,6 +34,23 @@ in
 standalone '<
   +body {
     ${ax^2 + bx + c = 0}
+  }
+>
+```
+
+This one is not compiled:
+
+```{.satysfi eval="no"}
+@require: stdjareport
+
+document (|
+  title = {test};
+  author = {nekketsuuu};
+  show-title = false;
+  show-toc = false;
+|) '<
+  +p {
+    Testing!
   }
 >
 ```

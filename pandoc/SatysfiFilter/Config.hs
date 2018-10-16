@@ -1,6 +1,7 @@
 module SatysfiFilter.Config (
   CodeId,
   Version,
+  cssClass,
   outputDir,
   imgFormat
   ) where
@@ -17,3 +18,5 @@ outputDir = "generated"
 imgFormat :: String
 imgFormat = "png"
 
+cssClass :: String
+cssClass = "p-code"

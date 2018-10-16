@@ -39,10 +39,12 @@ convertBlock version basename (id, classes, namevals) contents = do
   saveCode basename contents
   compileCode basename
   generateImg basename
-  return $ Div nullAttr [codeBlock, imgBlock, versionBlock]
+  return $ Div attr [codeBlock, imgBlock, versionBlock]
   where
+    attr = ("", [cssClass], [])
     displayContents = snipCode contents
     codeBlock = CodeBlock (id, classes, namevals) displayContents
+    -- TODO(nekketsuuu): add alt-text
     imgInline = Image nullAttr [] (urlConcat [outputDir, getImgFilename basename], "")
     imgBlock = Para $ [imgInline]
     versionBlock = Para $ [Str $ "Compiled by " ++ version]

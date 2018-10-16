@@ -40,14 +40,14 @@ getFileBasename codeId = do
   id <- readIORef codeId
   return $ "output" ++ (show id)
 
-getSatyFilename :: String -> String
-getSatyFilename base = base ++ ".saty"
-
 getSatyPath :: String -> String
-getSatyPath base = outputDir FP.</> getSatyFilename base
+getSatyPath base = outputDir FP.</> base FP.<.> "saty"
+
+getPdfPath :: String -> String
+getPdfPath base = outputDir FP.</> base FP.<.> "pdf"
 
 getImgFilename :: String -> String
-getImgFilename codeBasename = codeBasename ++ "." ++ imgFormat
+getImgFilename base = base FP.<.> imgFormat
 
 getImgPath :: String -> String
 getImgPath base = outputDir FP.</> getImgFilename base
@@ -58,13 +58,13 @@ getSatysfiVersion = do
   return $ T.unpack $ T.strip shOut
 
 saveCode :: String -> String -> IO ()
-saveCode basename contents =
-  writeFile (getSatyPath basename) contents
+saveCode base contents =
+  writeFile (getSatyPath base) contents
 
--- TODO(nekketsuuu): implement
 compileCode :: String -> IO ()
-compileCode basename = return ()
+compileCode base = shelly $ silently $ do
+  run_ "satysfi" [T.pack $ getSatyPath base, "-o", T.pack $ getPdfPath base]
 
 -- TODO(nekketsuuu): implement
 generateImg :: String -> IO ()
-generateImg basename = return ()
+generateImg base = return ()

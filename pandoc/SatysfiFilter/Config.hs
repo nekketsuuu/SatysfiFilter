@@ -12,7 +12,7 @@ type CodeId = IORef Integer
 
 -- TODO(nekketsuuu): ad-hoc
 outputDir :: String
-outputDir = "compiled"
+outputDir = "generated"
 
 imgFormat :: String
 imgFormat = "png"

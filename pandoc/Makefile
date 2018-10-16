@@ -18,4 +18,4 @@ satysfiFilter: $(SRC)
 
 .PHONY: clean
 clean:
-	rm -rf satysfiFilter test/test.html test/compiled
+	rm -rf satysfiFilter test/test.html test/generated

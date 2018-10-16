@@ -2,6 +2,7 @@
 
 module SatysfiFilter.Misc (
   caselessElem,
+  deleteAll,
   isSpecialComment,
   urlConcat
   ) where
@@ -14,6 +15,12 @@ caselessElem query lst = elem query' lst'
   where
     query' = T.toCaseFold . T.pack $ query
     lst' = map (T.toCaseFold . T.pack) lst
+
+deleteAll :: Eq a => a -> [(a, b)] -> [(a, b)]
+deleteAll _ [] = []
+deleteAll key ((k, v):xs) =
+  if k == key then deleteAll key xs
+  else (k, v) : deleteAll key xs
 
 urlConcat :: [String] -> String
 urlConcat [] = ""

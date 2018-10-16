@@ -30,8 +30,12 @@ doFilter version codeId cb@(CodeBlock (id, classes, namevals) contents) = do
   case (caselessElem "satysfi" classes, lookup "eval" namevals) of
     (True, Nothing)            -> converted basename
     (True, Just v) | v /= "no" -> converted basename
-    _ -> return cb
-  where converted base = convertBlock version base (id, classes, namevals) contents
+    (True, _)                  -> return cb'
+    _                          -> return cb
+  where
+    namevals' = deleteAll "eval" namevals
+    converted base = convertBlock version base (id, classes, namevals') contents
+    cb' = CodeBlock (id, classes, namevals') contents
 doFilter _ _ x = return x
 
 convertBlock :: Version -> String -> Attr -> String -> IO Block

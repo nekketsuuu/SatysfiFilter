@@ -1,19 +1,26 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module MiscSpec (spec) where
 
 import Control.Monad (liftM2)
 import Data.Char (toLower, toUpper)
 import Data.List (all, lookup)
 import Data.Maybe (isNothing)
+import qualified Data.Text as T
 
 import Test.Hspec
 import Test.Hspec.QuickCheck (prop)
 import Test.QuickCheck
 import Misc
 
+default (T.Text)
+
 spec :: Spec
 spec = do
   spec_caselessElem
   spec_deleteAll
+  spec_urlConcat
+  spec_isSpecialComment
 
 spec_caselessElem :: Spec
 spec_caselessElem = do
@@ -58,3 +65,17 @@ prop_deleteAll_no_key k =
   isNothing $ lookup k $ deleteAll k kvs
   where
     allKvs = arbitrary :: Gen [(Integer, Integer)]
+
+spec_urlConcat :: Spec
+spec_urlConcat = do
+  describe "urlConcat" $ do
+    it "passes small manual cases" $ do
+      urlConcat ["example.com", "foo", "bar"] `shouldBe` "example.com/foo/bar"
+      urlConcat [".", "foo/bar"] `shouldBe` "./foo/bar"
+
+spec_isSpecialComment :: Spec
+spec_isSpecialComment = do
+  describe "isSpecialComment" $ do
+    it "passes small manual cases" $ do
+      isSpecialComment "BEGIN" "%% BEGIN" `shouldBe` True
+      isSpecialComment "BEGIN" "    %%BEGIN abcdef  " `shouldBe` True

@@ -9,9 +9,9 @@ import qualified Data.Text as T
 import System.Directory
 import Text.Pandoc.JSON
 
-import SatysfiFilter.Config
-import SatysfiFilter.Misc
-import SatysfiFilter.Shell
+import Config
+import Misc
+import Shell
 
 default (T.Text)
 

@@ -2,8 +2,7 @@
 *~
 
 # compilation results
-*.hi
-*.o
-/pandoc/satysfiFilter
-/pandoc/test/test.html
-/pandoc/test/generated
+/.stack-work
+/SatysfiFilter.cabal
+/example/test.html
+/example/generated

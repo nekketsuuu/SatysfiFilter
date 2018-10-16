@@ -1,4 +1,4 @@
-module SatysfiFilter.Config (
+module Config (
   CodeId,
   Version,
   cssClass,

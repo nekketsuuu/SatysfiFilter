@@ -2,7 +2,7 @@
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# OPTIONS_GHC -fno-warn-type-defaults #-}
 
-module SatysfiFilter.Shell (
+module Shell (
   checkCommands,
   compileCode,
   generateImg,
@@ -19,7 +19,7 @@ import Shelly
 import System.Directory
 import qualified System.FilePath as FP
 
-import SatysfiFilter.Config
+import Config
 
 default (T.Text)
 

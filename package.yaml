@@ -1,0 +1,53 @@
+name:                SatysfiFilter
+version:             0.1.0.0
+github:              "nekketsuuu/SatysfiFilter"
+license:             MIT
+author:              "Takuma Ishikawa"
+maintainer:          "nekketsuuu@users.noreply.github.com"
+copyright:           "2018 Takuma Ishikawa (@nekketsuuu)"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/nekketsuuu/SatysfiFilter#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- directory >= 1.3 && < 2
+- filepath >= 1.4 && < 2
+- pandoc-types >= 1.17 && < 2
+- shelly >= 1.8 && < 2
+- text >= 1.2 && < 2
+
+library:
+  source-dirs: src
+
+executables:
+  SatysfiFilter-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - SatysfiFilter
+
+tests:
+  SatysfiFilter-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - SatysfiFilter

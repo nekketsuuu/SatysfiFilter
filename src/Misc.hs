@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module SatysfiFilter.Misc (
+module Misc (
   caselessElem,
   deleteAll,
   isSpecialComment,

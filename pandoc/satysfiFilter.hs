@@ -1,12 +1,23 @@
 import Data.Char
 import Data.List
 import Data.Maybe
+import System.Directory
 import Text.Pandoc.JSON
 
 -- TODO(nekketsuuu): Use Data.Text instead of String
 
 main :: IO ()
-main = toJSONFilter doFilter
+main = do
+  checkCommands ["mogrify", "pandoc", "pdftoppm", "satysfi"]
+  toJSONFilter doFilter
+
+checkCommands :: [String] -> IO ()
+checkCommands [] = return ()
+checkCommands (cmd:cmds) = do
+  r <- findExecutable cmd
+  case r of
+    Just _ -> checkCommands cmds
+    Nothing -> error $ "Command \"" ++ cmd ++ "\" does not exist"
 
 doFilter :: Block -> IO Block
 doFilter cb@(CodeBlock (id, classes, namevals) contents) =

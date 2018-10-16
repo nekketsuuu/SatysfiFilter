@@ -63,8 +63,23 @@ saveCode base contents =
 
 compileCode :: String -> IO ()
 compileCode base = shelly $ silently $ do
-  run_ "satysfi" [T.pack $ getSatyPath base, "-o", T.pack $ getPdfPath base]
+  run_ "satysfi" [T.pack $ getSatyPath base
+                 , "-o", T.pack $ getPdfPath base]
 
--- TODO(nekketsuuu): implement
 generateImg :: String -> IO ()
-generateImg base = return ()
+generateImg base = shelly $ silently $ do
+  run_ "pdftoppm" [T.pack ("-" ++ imgFormat)
+                  ,"-f", "1"
+                  ,"-singlefile"
+                  ,"-rx", resolution
+                  ,"-ry", resolution
+                  ,T.pack $ getPdfPath base
+                  ,T.pack $ outputDir FP.</> base]
+  run_ "mogrify" ["-fuzz", "20%"
+                 ,"-trim"
+                 ,"-bordercolor", "White"
+                 ,"-border", T.pack (border ++ "x" ++ border)
+                 ,T.pack $ getImgPath base]
+  where
+    resolution = "300"
+    border = "30"

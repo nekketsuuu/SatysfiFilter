@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
 
+import Control.Monad (when)
 import Data.IORef
 import Data.List
 import Data.Maybe
@@ -19,13 +20,11 @@ main = do
   checkCommands necessaryCmds
   version <- getSatysfiVersion
   codeId <- newIORef 0
-  createDirectoryIfMissing True outputDir
   toJSONFilter $ doFilter version codeId
 
 doFilter :: Version -> CodeId -> Block -> IO Block
 doFilter version codeId cb@(CodeBlock (id, classes, namevals) contents) = do
   basename <- getFileBasename codeId
-  modifyIORef codeId (+ 1)
   case (caselessElem "satysfi" classes, lookup "eval" namevals) of
     (True, Nothing)            -> converted basename
     (True, Just v) | v /= "no" -> converted basename
@@ -33,7 +32,11 @@ doFilter version codeId cb@(CodeBlock (id, classes, namevals) contents) = do
     _                          -> return cb
   where
     namevals' = deleteAll "eval" namevals
-    converted base = convertBlock version base (id, classes, namevals') contents
+    converted base = do
+      num <- readIORef codeId
+      when (num == 0) $ createDirectoryIfMissing True outputDir
+      modifyIORef codeId (+ 1)
+      convertBlock version base (id, classes, namevals') contents
     cb' = CodeBlock (id, classes, namevals') contents
 doFilter _ _ x = return x
 

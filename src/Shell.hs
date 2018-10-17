@@ -7,17 +7,21 @@ module Shell (
   compileCode,
   generateImg,
   getFileBasename,
+  getFirstId,
   getImgFilename,
   getSatysfiVersion,
   saveCode,
   necessaryCmds
   ) where
 
-import Data.IORef (readIORef)
+import Data.IORef (IORef, readIORef)
+import Data.List (stripPrefix)
+import Data.Maybe (catMaybes)
 import qualified Data.Text as T
 import Shelly
-import System.Directory (findExecutable)
+import System.Directory (doesDirectoryExist, findExecutable, listDirectory)
 import qualified System.FilePath as FP
+import Text.Read (readMaybe)
 
 import Config
 
@@ -34,12 +38,29 @@ checkCommands (cmd:cmds) = do
     Just _ -> checkCommands cmds
     Nothing -> error $ "Command \"" ++ cmd ++ "\" does not exist"
 
+getFirstId :: IO CodeId
+getFirstId = do
+  filesOut <- listDirectory' outputDir
+  filesImg <- listDirectory' $ outputDir FP.</> imgDir
+  filesTmp <- listDirectory' $ outputDir FP.</> tmpDir
+  let bases = map FP.takeBaseName (filesOut ++ filesImg ++ filesTmp)
+  let suffixes = catMaybes $ map (stripPrefix outputPrefix) bases
+  let ids = (catMaybes $ map readMaybe suffixes) :: [CodeId]
+  return $
+    case ids of
+      [] -> 0
+      _ -> 1 + maximum ids
+  where
+    listDirectory' path = do
+      exist <- doesDirectoryExist path
+      if exist then listDirectory path else return []
+
 -- TODO(nekketsuuu): padding zeros
 -- TODO(nekketsuuu): use hash value?
-getFileBasename :: CodeId -> IO String
+getFileBasename :: IORef CodeId -> IO String
 getFileBasename codeId = do
   id <- readIORef codeId
-  return $ "output" ++ (show id)
+  return $ outputPrefix ++ (show id)
 
 getSatyPath :: String -> String
 getSatyPath base = outputDir FP.</> tmpDir FP.</> base FP.<.> "saty"

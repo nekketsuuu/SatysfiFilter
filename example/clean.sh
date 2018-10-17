@@ -1,3 +1,5 @@
 #!/bin/sh
 
-rm -rf ./test.html ./generated
+set -x
+
+rm -rf ./generated

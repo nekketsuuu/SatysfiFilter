@@ -1,4 +1,4 @@
-## Test
+## Index
 
 This file is for testing.
 
@@ -54,3 +54,5 @@ document (|
   }
 >
 ```
+
+Here is [another page](./child.html).

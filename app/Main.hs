@@ -2,7 +2,7 @@
 {-# LANGUAGE ExtendedDefaultRules #-}
 
 import Control.Monad (when)
-import Data.IORef (newIORef, modifyIORef, readIORef)
+import Data.IORef (IORef, newIORef, modifyIORef, readIORef)
 import Data.List (drop, findIndex, take)
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
@@ -20,10 +20,11 @@ main :: IO ()
 main = do
   checkCommands necessaryCmds
   version <- getSatysfiVersion
-  codeId <- newIORef 0
+  firstId <- getFirstId
+  codeId <- newIORef firstId
   toJSONFilter $ doFilter version codeId
 
-doFilter :: Version -> CodeId -> Block -> IO Block
+doFilter :: Version -> IORef CodeId -> Block -> IO Block
 doFilter version codeId cb@(CodeBlock (id, classes, namevals) contents) = do
   basename <- getFileBasename codeId
   case (caselessElem "satysfi" classes, lookup "eval" namevals) of

@@ -13,10 +13,10 @@ module Shell (
   necessaryCmds
   ) where
 
-import Data.IORef
+import Data.IORef (readIORef)
 import qualified Data.Text as T
 import Shelly
-import System.Directory
+import System.Directory (findExecutable)
 import qualified System.FilePath as FP
 
 import Config

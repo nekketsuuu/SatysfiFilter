@@ -6,7 +6,7 @@ module Config (
   imgFormat
   ) where
 
-import Data.IORef
+import Data.IORef (IORef)
 
 type Version = String
 type CodeId = IORef Integer

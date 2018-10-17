@@ -4,16 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0.0]
 ### Added
 - Support successive filtering of multiple files
 
 ### Changed
 - Don't create an output directory if there is no target code blocks.
 - Change hierarchy of outputs. HTML files are generated under `generated` directory now.
+- Change design
 
 ## 0.1.0.0
 ### Added
 - Initial release
 
   [Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0.0...HEAD
+  [0.2.0.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0.0...v0.2.0.0

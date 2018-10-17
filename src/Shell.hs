@@ -104,6 +104,7 @@ generateImg base = shelly $ silently $ do
                  ,"-trim"
                  ,"-bordercolor", "White"
                  ,"-border", T.pack (border ++ "x" ++ border)
+                 ,"-strip"
                  ,T.pack $ getImgPath base]
   where
     resolution = "300"

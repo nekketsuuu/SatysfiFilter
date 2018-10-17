@@ -1,10 +1,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Misc (
-  caselessElem,
-  deleteAll,
-  isSpecialComment,
-  urlConcat
+module Misc
+  ( caselessElem
+  , deleteAll
+  , isSpecialComment
+  , urlConcat
   ) where
 
 import qualified Data.Text as T

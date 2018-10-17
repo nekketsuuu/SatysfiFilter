@@ -1,12 +1,12 @@
-module Config (
-  CodeId,
-  Version,
-  cssClass,
-  outputDir,
-  outputPrefix,
-  imgDir,
-  imgFormat,
-  tmpDir
+module Config
+  ( CodeId
+  , Version
+  , cssClass
+  , outputDir
+  , outputPrefix
+  , imgDir
+  , imgFormat
+  , tmpDir
   ) where
 
 import Data.IORef (IORef)

@@ -2,16 +2,16 @@
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# OPTIONS_GHC -fno-warn-type-defaults #-}
 
-module Shell (
-  checkCommands,
-  compileCode,
-  generateImg,
-  getFileBasename,
-  getFirstId,
-  getImgFilename,
-  getSatysfiVersion,
-  saveCode,
-  necessaryCmds
+module Shell
+  ( checkCommands
+  , compileCode
+  , generateImg
+  , getFileBasename
+  , getFirstId
+  , getImgFilename
+  , getSatysfiVersion
+  , saveCode
+  , necessaryCmds
   ) where
 
 import Data.IORef (IORef, readIORef)
@@ -93,19 +93,19 @@ compileCode base = shelly $ silently $ do
 
 generateImg :: String -> IO ()
 generateImg base = shelly $ silently $ do
-  run_ "pdftoppm" [T.pack ("-" ++ imgFormat)
-                  ,"-f", "1"
-                  ,"-singlefile"
-                  ,"-rx", resolution
-                  ,"-ry", resolution
-                  ,T.pack $ getPdfPath base
-                  ,T.pack $ getImgPathWithoutEx base]
-  run_ "mogrify" ["-fuzz", "20%"
-                 ,"-trim"
-                 ,"-bordercolor", "White"
-                 ,"-border", T.pack (border ++ "x" ++ border)
-                 ,"-strip"
-                 ,T.pack $ getImgPath base]
+  run_ "pdftoppm" [ T.pack ("-" ++ imgFormat)
+                  , "-f", "1"
+                  , "-singlefile"
+                  , "-rx", resolution
+                  , "-ry", resolution
+                  , T.pack $ getPdfPath base
+                  , T.pack $ getImgPathWithoutEx base]
+  run_ "mogrify" [ "-fuzz", "20%"
+                 , "-trim"
+                 , "-bordercolor", "White"
+                 , "-border", T.pack (border ++ "x" ++ border)
+                 , "-strip"
+                 , T.pack $ getImgPath base]
   where
     resolution = "300"
     border = "30"

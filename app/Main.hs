@@ -54,12 +54,12 @@ convertBlock version basename (id, classes, namevals) contents = do
   where
     codeAttr = ("", [codeCssClass], [])
     displayContents = snipCode contents
-    descBlock1 = Para $ [Strong [Str $ "コード例"]]
+    descBlock1 = Para [Strong [Str $ "コード例"]]
     codeBlock = CodeBlock (id, classes, namevals) displayContents
-    descBlock2 = Para $ [Strong [Str $ "コード例の組版結果 (" ++ version ++ ")"]]
+    descBlock2 = Para [Strong [Str $ "コード例の組版結果 (" ++ version ++ ")"]]
     imgAttr = ("", [imgCssClass], [])
     imgInline = Image nullAttr [] (urlConcat [imgDir, getImgFilename basename], "")
-    imgBlock = Div imgAttr [Para $ [imgInline]]
+    imgBlock = Para [Span imgAttr [imgInline]]
 
 snipCode :: String -> String
 snipCode contents =

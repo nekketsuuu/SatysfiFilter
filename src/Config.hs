@@ -3,7 +3,9 @@ module Config (
   Version,
   cssClass,
   outputDir,
-  imgFormat
+  imgDir,
+  imgFormat,
+  tmpDir
   ) where
 
 import Data.IORef (IORef)
@@ -14,6 +16,12 @@ type CodeId = IORef Integer
 -- TODO(nekketsuuu): ad-hoc
 outputDir :: String
 outputDir = "generated"
+
+imgDir :: String
+imgDir = "img"
+
+tmpDir :: String
+tmpDir = "tmp"
 
 imgFormat :: String
 imgFormat = "png"

@@ -7,6 +7,7 @@ import Data.List
 import Data.Maybe
 import qualified Data.Text as T
 import System.Directory
+import System.FilePath ((</>))
 import Text.Pandoc.JSON
 
 import Config
@@ -34,7 +35,10 @@ doFilter version codeId cb@(CodeBlock (id, classes, namevals) contents) = do
     namevals' = deleteAll "eval" namevals
     converted base = do
       num <- readIORef codeId
-      when (num == 0) $ createDirectoryIfMissing True outputDir
+      when (num == 0) $ do
+        createDirectoryIfMissing True outputDir
+        createDirectoryIfMissing True $ outputDir </> imgDir
+        createDirectoryIfMissing True $ outputDir </> tmpDir
       modifyIORef codeId (+ 1)
       convertBlock version base (id, classes, namevals') contents
     cb' = CodeBlock (id, classes, namevals') contents
@@ -51,7 +55,7 @@ convertBlock version basename (id, classes, namevals) contents = do
     displayContents = snipCode contents
     codeBlock = CodeBlock (id, classes, namevals) displayContents
     -- TODO(nekketsuuu): add alt-text
-    imgInline = Image nullAttr [] (urlConcat [outputDir, getImgFilename basename], "")
+    imgInline = Image nullAttr [] (urlConcat [imgDir, getImgFilename basename], "")
     imgBlock = Para $ [imgInline]
     versionBlock = Para $ [Str $ "Compiled by " ++ version]
 

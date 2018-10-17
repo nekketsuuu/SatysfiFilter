@@ -42,16 +42,19 @@ getFileBasename codeId = do
   return $ "output" ++ (show id)
 
 getSatyPath :: String -> String
-getSatyPath base = outputDir FP.</> base FP.<.> "saty"
+getSatyPath base = outputDir FP.</> tmpDir FP.</> base FP.<.> "saty"
 
 getPdfPath :: String -> String
-getPdfPath base = outputDir FP.</> base FP.<.> "pdf"
+getPdfPath base = outputDir FP.</> tmpDir FP.</> base FP.<.> "pdf"
 
 getImgFilename :: String -> String
 getImgFilename base = base FP.<.> imgFormat
 
+getImgPathWithoutEx :: String -> String
+getImgPathWithoutEx base = outputDir FP.</> imgDir FP.</> base
+
 getImgPath :: String -> String
-getImgPath base = outputDir FP.</> getImgFilename base
+getImgPath base = getImgPathWithoutEx base FP.<.> imgFormat
 
 getSatysfiVersion :: IO Version
 getSatysfiVersion = do
@@ -75,7 +78,7 @@ generateImg base = shelly $ silently $ do
                   ,"-rx", resolution
                   ,"-ry", resolution
                   ,T.pack $ getPdfPath base
-                  ,T.pack $ outputDir FP.</> base]
+                  ,T.pack $ getImgPathWithoutEx base]
   run_ "mogrify" ["-fuzz", "20%"
                  ,"-trim"
                  ,"-bordercolor", "White"

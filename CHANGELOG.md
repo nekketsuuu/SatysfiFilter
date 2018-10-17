@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Don't create an output directory if there is no target code blocks.
+- Change hierarchy of outputs. HTML files are generated under `generated` directory now.
 
 ## 0.1.0.0
 ### Added

@@ -30,4 +30,4 @@ imgFormat :: String
 imgFormat = "png"
 
 cssClass :: String
-cssClass = "p-code"
+cssClass = "satysfi-code"

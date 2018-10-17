@@ -50,16 +50,16 @@ convertBlock version basename (id, classes, namevals) contents = do
   saveCode basename contents
   compileCode basename
   generateImg basename
-  return $ Div attr [descBlock1, codeBlock, descBlock2, imgBlock]
+  return $ Div codeAttr [descBlock1, codeBlock, descBlock2, imgBlock]
   where
-    attr = ("", [cssClass], [])
+    codeAttr = ("", [codeCssClass], [])
     displayContents = snipCode contents
     descBlock1 = Para $ [Strong [Str $ "コード例"]]
     codeBlock = CodeBlock (id, classes, namevals) displayContents
     descBlock2 = Para $ [Strong [Str $ "コード例の組版結果 (" ++ version ++ ")"]]
-    -- TODO(nekketsuuu): add alt-text
+    imgAttr = ("", [imgCssClass], [])
     imgInline = Image nullAttr [] (urlConcat [imgDir, getImgFilename basename], "")
-    imgBlock = Para $ [imgInline]
+    imgBlock = Div imgAttr [Para $ [imgInline]]
 
 snipCode :: String -> String
 snipCode contents =

@@ -1,7 +1,8 @@
 module Config
   ( CodeId
   , Version
-  , cssClass
+  , codeCssClass
+  , imgCssClass
   , outputDir
   , outputPrefix
   , imgDir
@@ -29,5 +30,8 @@ tmpDir = "tmp"
 imgFormat :: String
 imgFormat = "png"
 
-cssClass :: String
-cssClass = "satysfi-code"
+codeCssClass :: String
+codeCssClass = "satysfi-code"
+
+imgCssClass :: String
+imgCssClass = "result-img"

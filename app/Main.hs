@@ -2,11 +2,11 @@
 {-# LANGUAGE ExtendedDefaultRules #-}
 
 import Control.Monad (when)
-import Data.IORef
-import Data.List
-import Data.Maybe
+import Data.IORef (newIORef, modifyIORef, readIORef)
+import Data.List (drop, findIndex, take)
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
-import System.Directory
+import System.Directory (createDirectoryIfMissing)
 import System.FilePath ((</>))
 import Text.Pandoc.JSON
 

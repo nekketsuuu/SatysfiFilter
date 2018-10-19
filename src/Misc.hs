@@ -5,9 +5,12 @@ module Misc
   , deleteAll
   , isSpecialComment
   , urlConcat
+  , snipCode
   ) where
 
 import qualified Data.Text as T
+import Data.List (drop, findIndex, take)
+import Data.Maybe (fromMaybe)
 default (T.Text)
 
 caselessElem :: String -> [String] -> Bool
@@ -40,3 +43,12 @@ isSpecialComment tag line = isDoublePercent && isTag
     getTag str =
       if head2 == "%%" then (True, T.stripStart rest)
       else (False, "")
+
+snipCode :: String -> String
+snipCode contents =
+  unlines $ slice begin end ls
+  where
+    ls = lines contents
+    slice from to xs = take (to - from) $ drop from $ xs
+    begin = 1 + (fromMaybe (-1) $ findIndex (\l -> isSpecialComment "BEGIN" $ T.pack l) ls)
+    end = fromMaybe (1 + length ls) $ findIndex (\l -> isSpecialComment "END" $ T.pack l) ls

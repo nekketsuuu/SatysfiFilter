@@ -5,6 +5,7 @@
 module Shell
   ( checkCommands
   , compileCode
+  , compileCodeWithArgs
   , compileInvalidCode
   , generateImg
   , getFileBasename
@@ -91,6 +92,14 @@ compileCode :: String -> IO ()
 compileCode base = shelly $ silently $ do
   run_ "satysfi" [ T.pack $ getSatyPath base
                  , "-o", T.pack $ getPdfPath base]
+
+compileCodeWithArgs :: String -> [T.Text] -> IO ()
+compileCodeWithArgs base args = shelly $ silently $ do
+  run_ "satysfi" $
+    [ T.pack $ getSatyPath base
+    , "-o", T.pack $ getPdfPath base]
+    ++
+    args
 
 generateImg :: String -> IO ()
 generateImg base = shelly $ silently $ do

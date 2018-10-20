@@ -65,4 +65,12 @@ document (|
 >
 ```
 
+This one is compilied, but a result image is not embedded.
+
+```{.satysfi eval="type-check-only"}
+let-rec fact n =
+  if n <= 1 then 1
+  else fact (n - 1)
+```
+
 Here is [another page](./child.html).

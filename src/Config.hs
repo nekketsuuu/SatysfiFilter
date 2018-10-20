@@ -6,6 +6,7 @@ module Config
   , outputDir
   , outputErrorBasename
   , outputPrefix
+  , outputTmpBasename
   , imgDir
   , imgFormat
   , tmpDir
@@ -24,6 +25,9 @@ outputPrefix = "output"
 
 outputErrorBasename :: String
 outputErrorBasename = "must-error"
+
+outputTmpBasename :: String
+outputTmpBasename = "tmp"
 
 imgDir :: String
 imgDir = "img"

@@ -18,23 +18,22 @@ default (T.Text)
 
 doFilter :: Version -> IORef CodeId -> Block -> IO Block
 doFilter version codeId cb@(CodeBlock (id, classes, namevals) contents) = do
-  basename <- getFileBasename codeId
   case (caselessElem "satysfi" classes, lookup "eval" namevals) of
-    (True, Nothing)               -> resultDiv basename
-    (True, Just v) | v == "error" -> errorDiv basename
-    (True, Just v) | v /= "no"    -> resultDiv basename
-    (True, _)                     -> return cb'
-    _                             -> return cb
+    (True, Nothing)                -> resultDiv
+    (True, Just "error")           -> generateErrorDiv version attr' contents
+    (True, Just "type-check-only") -> generateCodeDivWithCompile attr' contents
+    (True, Just "no")              -> generateCodeDiv attr' contents
+    (True, _)                      -> resultDiv
+    _                              -> return cb
   where
     namevals' = deleteAll "eval" namevals
-    cb' = CodeBlock (id, classes, namevals') contents
-    resultDiv base = do
+    attr' = (id, classes, namevals')
+    resultDiv = do
+      basename <- getFileBasename codeId
       num <- readIORef codeId
       createDirectoriesIfMissing num
       modifyIORef codeId (+ 1)
-      generateResultDiv version base (id, classes, namevals') contents
-    errorDiv base = do
-      generateErrorDiv version (id, classes, namevals') contents
+      generateResultDiv version basename attr' contents
 doFilter _ _ x = return x
 
 createDirectoriesIfMissing :: CodeId -> IO ()
@@ -49,19 +48,45 @@ codeAttr = ("", [codeCssClass], [])
 imgAttr :: Attr
 imgAttr = ("", [imgCssClass], [])
 
+codeBlocks :: Attr -> String -> (Block, Block)
+codeBlocks attr contents =
+  (descBlock, codeBlock)
+  where
+    displayContents = snipCode contents
+    descBlock = Para [Strong [Str $ "コード例"]]
+    codeBlock = CodeBlock attr displayContents
+
+imgBlocks :: Version -> String -> (Block, Block)
+imgBlocks version basename =
+  (descBlock, imgBlock)
+  where
+    descBlock = Para [Strong [Str $ "コード例の組版結果 (" ++ version ++ ")"]]
+    imgInline = Image nullAttr [] (urlConcat [imgDir, getImgFilename basename], "")
+    imgBlock = Para [Span imgAttr [imgInline]]
+
 generateResultDiv :: Version -> String -> Attr -> String -> IO Block
-generateResultDiv version basename (id, classes, namevals) contents = do
+generateResultDiv version basename attr contents = do
   saveCode basename contents
   compileCode basename
   generateImg basename
   return $ Div codeAttr [descBlock1, codeBlock, descBlock2, imgBlock]
   where
-    displayContents = snipCode contents
-    descBlock1 = Para [Strong [Str $ "コード例"]]
-    codeBlock = CodeBlock (id, classes, namevals) displayContents
-    descBlock2 = Para [Strong [Str $ "コード例の組版結果 (" ++ version ++ ")"]]
-    imgInline = Image nullAttr [] (urlConcat [imgDir, getImgFilename basename], "")
-    imgBlock = Para [Span imgAttr [imgInline]]
+    (descBlock1, codeBlock) = codeBlocks attr contents
+    (descBlock2, imgBlock) = imgBlocks version basename
+
+generateCodeDivWithCompile :: Attr -> String -> IO Block
+generateCodeDivWithCompile attr contents = do
+  saveCode outputTmpBasename contents
+  compileCodeWithArgs outputTmpBasename ["--type-check-only"]
+  return $ Div codeAttr [descBlock, codeBlock]
+  where
+    (descBlock, codeBlock) = codeBlocks attr contents
+
+generateCodeDiv :: Attr -> String -> IO Block
+generateCodeDiv attr contents = do
+  return $ Div codeAttr [descBlock, codeBlock]
+  where
+    (descBlock, codeBlock) = codeBlocks attr contents
 
 -- TODO(nekketsuuu): Parallelize (consider naming of code files)
 generateErrorDiv :: Version -> Attr -> String -> IO Block

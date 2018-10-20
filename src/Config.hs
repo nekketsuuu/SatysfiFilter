@@ -4,6 +4,7 @@ module Config
   , codeCssClass
   , imgCssClass
   , outputDir
+  , outputErrorBasename
   , outputPrefix
   , imgDir
   , imgFormat
@@ -20,6 +21,9 @@ outputDir = "generated"
 
 outputPrefix :: String
 outputPrefix = "output"
+
+outputErrorBasename :: String
+outputErrorBasename = "must-error"
 
 imgDir :: String
 imgDir = "img"

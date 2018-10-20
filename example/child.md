@@ -3,20 +3,14 @@
 This file is for testing
 
 ```satysfi
-@require: stdjabook
+@require: standalone
+@require: math
 
-document (|
-  title = {math};
-  author = {nekketsuuu};
-  show-toc = false;
-  show-title = false;
-|) ?:(|
-  show-pages = false;
-|) '<
+standalone '<
 %% BEGIN
-  +math (${
-    x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-  });
++math (${
+  x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+});
 %% END
 >
 ```

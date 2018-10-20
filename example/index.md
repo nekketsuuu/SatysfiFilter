@@ -3,18 +3,19 @@
 This file is for testing.
 
 ```satysfi
-@require: stdjareport
+@require: standalone
 
+let-block ctx +p it =
+  let ib = read-inline ctx it in
+  let ib = inline-fil ++ ib ++ inline-fil in
+  line-break false false ctx ib
+in
+standalone '<
 %% BEGIN
-document (|
-  title = {test};
-  author = {nekketsuuu};
-|) ?:(|
-  show-pages = false;
-|) '<
-  +p {
-    Testing!
-  }
++p {
+  Testing!
+}
+%% END
 >
 ```
 
@@ -24,17 +25,13 @@ Another one...
 
 ```satysfi
 @require: standalone
+@require: math
 
-let-block ctx +body it =
-  let ib = read-inline ctx it in
-  let ib = inline-fil ++ ib ++ inline-fil in
-  line-break false false ctx ib
-in
 %% BEGIN
 standalone '<
-  +body {
-    ${ax^2 + bx + c = 0}
-  }
+  +math (${
+    ax^2 + bx + c = 0
+  });
 >
 ```
 
@@ -46,8 +43,21 @@ This one is not compiled:
 document (|
   title = {test};
   author = {nekketsuuu};
-  show-title = false;
-  show-toc = false;
+|) '<
+  +p {
+    Testing!
+  }
+>
+```
+
+This one will cause an error, but it will be collected and displayed:
+
+```{.satysfi eval="error"}
+@require: stdjabook
+
+document (|
+  title = {error test};
+  author = {nekketsuuu};
 |) '<
   +p {
     Testing!

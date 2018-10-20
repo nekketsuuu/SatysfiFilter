@@ -5,6 +5,7 @@
 module Shell
   ( checkCommands
   , compileCode
+  , compileInvalidCode
   , generateImg
   , getFileBasename
   , getFirstId
@@ -88,7 +89,7 @@ saveCode base contents =
 
 compileCode :: String -> IO ()
 compileCode base = shelly $ silently $ do
-  run_ "satysfi" [T.pack $ getSatyPath base
+  run_ "satysfi" [ T.pack $ getSatyPath base
                  , "-o", T.pack $ getPdfPath base]
 
 generateImg :: String -> IO ()
@@ -109,3 +110,20 @@ generateImg base = shelly $ silently $ do
   where
     resolution = "300"
     border = "30"
+
+compileInvalidCode :: String -> IO T.Text
+compileInvalidCode base = shelly $ silently $ do
+  (exitCode, mes) <-
+    runErr "satysfi" [ T.pack $ getSatyPath base
+                     , "-o", T.pack $ getPdfPath base]
+  when (exitCode == 0) $
+    errorExit $
+    "Compilation of " `T.append` (T.pack base) `T.append` ".saty must be failed, but didn't."
+  return mes
+
+runErr :: Shelly.FilePath -> [T.Text] -> Sh (Int, T.Text)
+runErr cmd args = errExit False $ do
+  -- TODO(nekketsuuu): patch SATySFi to use stderr if panic
+  mes <- run cmd args
+  exitCode <- lastExitCode
+  return (exitCode, mes)

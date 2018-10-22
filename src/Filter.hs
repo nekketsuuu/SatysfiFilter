@@ -20,6 +20,7 @@ doFilter :: Version -> IORef CodeId -> Block -> IO Block
 doFilter version codeId cb@(CodeBlock (id, classes, namevals) contents) = do
   case (caselessElem "satysfi" classes, lookup "eval" namevals) of
     (True, Nothing)                -> resultDiv
+    (True, Just "all-pages")       -> allResultDiv
     (True, Just "error")           -> generateErrorDiv version attr' contents
     (True, Just "type-check-only") -> generateCodeDivWithCompile attr' contents
     (True, Just "no")              -> generateCodeDiv attr' contents
@@ -28,13 +29,21 @@ doFilter version codeId cb@(CodeBlock (id, classes, namevals) contents) = do
   where
     namevals' = deleteAll "eval" namevals
     attr' = (id, classes, namevals')
+    allResultDiv = do
+      basename <- getBasename codeId
+      generateAllResultDiv version basename attr' contents
     resultDiv = do
-      basename <- getFileBasename codeId
-      num <- readIORef codeId
-      createDirectoriesIfMissing num
-      modifyIORef codeId (+ 1)
+      basename <- getBasename codeId
       generateResultDiv version basename attr' contents
 doFilter _ _ x = return x
+
+getBasename :: IORef CodeId -> IO String
+getBasename codeId = do
+  base <- getFileBasename codeId
+  num <- readIORef codeId
+  createDirectoriesIfMissing num
+  modifyIORef codeId (+ 1)
+  return base
 
 createDirectoriesIfMissing :: CodeId -> IO ()
 createDirectoriesIfMissing num = when (num == 0) $ do
@@ -56,13 +65,31 @@ codeBlocks attr contents =
     descBlock = Para [Strong [Str $ "コード例"]]
     codeBlock = CodeBlock attr displayContents
 
+imgDescBlock :: Version -> Block
+imgDescBlock version =
+  Para [Strong [Str $ "コード例の組版結果 (" ++ version ++ ")"]]
+
+imgBlock :: String -> Int -> Block
+imgBlock basename page =
+  let imgInline = Image nullAttr [] (urlConcat [imgDir, getImgFilename basename page], "")
+  in Para [Span imgAttr [imgInline]]
+
 imgBlocks :: Version -> String -> (Block, Block)
 imgBlocks version basename =
-  (descBlock, imgBlock)
+  (imgDescBlock version, imgBlock basename 1)
+
+generateAllResultDiv :: Version -> String -> Attr -> String -> IO Block
+generateAllResultDiv version basename attr contents = do
+  saveCode basename contents
+  compileCode basename
+  generateAllImgs basename
+  pages <- getPdfNumberOfPages basename
+  let allImgBlocks = map getImgBlock $ [1..pages]
+  return $ Div codeAttr ([descBlock1, codeBlock, descBlock2] ++ allImgBlocks)
   where
-    descBlock = Para [Strong [Str $ "コード例の組版結果 (" ++ version ++ ")"]]
-    imgInline = Image nullAttr [] (urlConcat [imgDir, getImgFilename basename], "")
-    imgBlock = Para [Span imgAttr [imgInline]]
+    (descBlock1, codeBlock) = codeBlocks attr contents
+    descBlock2 = imgDescBlock version
+    getImgBlock page = imgBlock basename page
 
 generateResultDiv :: Version -> String -> Attr -> String -> IO Block
 generateResultDiv version basename attr contents = do

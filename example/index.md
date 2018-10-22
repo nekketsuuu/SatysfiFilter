@@ -73,4 +73,30 @@ let-rec fact n =
   else fact (n - 1)
 ```
 
+If you want to embed all pages rather than the first page, use `eval="all-pages"`.
+
+```{.satysfi eval="all-pages"}
+@require: stdjabook
+
+let-inline \lorem = embed-string
+  `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
+in
+document (|
+  title = {All Pages};
+  author = {nekketsuuu};
+  show-toc = true;
+  show-title = true;
+|) '<
+  +p {
+    \lorem; \lorem; \lorem;
+  }
+  +p {
+    \lorem; \lorem; \lorem;
+  }
+  +p {
+    \lorem; \lorem; \lorem;
+  }
+>
+```
+
 Here is [another page](./child.html).

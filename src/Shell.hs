@@ -7,10 +7,12 @@ module Shell
   , compileCode
   , compileCodeWithArgs
   , compileInvalidCode
+  , generateAllImgs
   , generateImg
   , getFileBasename
   , getFirstId
   , getImgFilename
+  , getPdfNumberOfPages
   , getSatysfiVersion
   , saveCode
   , necessaryCmds
@@ -20,6 +22,7 @@ import Data.IORef (IORef, readIORef)
 import Data.List (stripPrefix)
 import Data.Maybe (catMaybes)
 import qualified Data.Text as T
+import qualified Data.Text.Read as TR
 import Shelly
 import System.Directory (doesDirectoryExist, findExecutable, listDirectory)
 import qualified System.FilePath as FP
@@ -30,7 +33,7 @@ import Config
 default (T.Text)
 
 necessaryCmds :: [String]
-necessaryCmds = ["mogrify", "pandoc", "pdftoppm", "satysfi"]
+necessaryCmds = ["awk", "mogrify", "pandoc", "pdftk", "pdftoppm", "satysfi"]
 
 checkCommands :: [String] -> IO ()
 checkCommands [] = return ()
@@ -70,14 +73,14 @@ getSatyPath base = outputDir FP.</> tmpDir FP.</> base FP.<.> "saty"
 getPdfPath :: String -> String
 getPdfPath base = outputDir FP.</> tmpDir FP.</> base FP.<.> "pdf"
 
-getImgFilename :: String -> String
-getImgFilename base = base FP.<.> imgFormat
+getImgFilename :: String -> Int -> String
+getImgFilename base page = base ++ "_" ++ (show page) FP.<.> imgFormat
 
-getImgPathWithoutEx :: String -> String
-getImgPathWithoutEx base = outputDir FP.</> imgDir FP.</> base
+getImgPathWithoutEx :: String -> Int -> String
+getImgPathWithoutEx base page = outputDir FP.</> imgDir FP.</> base ++ "_" ++ (show page)
 
-getImgPath :: String -> String
-getImgPath base = getImgPathWithoutEx base FP.<.> imgFormat
+getImgPath :: String -> Int -> String
+getImgPath base page = (getImgPathWithoutEx base page) FP.<.> imgFormat
 
 getSatysfiVersion :: IO Version
 getSatysfiVersion = do
@@ -101,24 +104,45 @@ compileCodeWithArgs base args = shelly $ silently $ do
     ++
     args
 
-generateImg :: String -> IO ()
-generateImg base = shelly $ silently $ do
+generateOneImg :: String -> Int -> Sh ()
+generateOneImg base page = do
   run_ "pdftoppm" [ T.pack ("-" ++ imgFormat)
-                  , "-f", "1"
+                  , "-f", T.pack $ show page
                   , "-singlefile"
                   , "-rx", resolution
                   , "-ry", resolution
                   , T.pack $ getPdfPath base
-                  , T.pack $ getImgPathWithoutEx base]
+                  , T.pack $ getImgPathWithoutEx base page]
   run_ "mogrify" [ "-fuzz", "20%"
                  , "-trim"
                  , "-bordercolor", "White"
                  , "-border", T.pack (border ++ "x" ++ border)
                  , "-strip"
-                 , T.pack $ getImgPath base]
+                 , T.pack $ getImgPath base page]
   where
     resolution = "300"
     border = "30"
+
+generateImg :: String -> IO ()
+generateImg base = shelly $ silently $
+  generateOneImg base 1
+
+getPdfNumberOfPages :: String -> IO Int
+getPdfNumberOfPages base =
+  shelly $ silently $ getPdfNumberOfPages' base
+
+getPdfNumberOfPages' :: String -> Sh Int
+getPdfNumberOfPages' base = do
+  let pdf = T.pack $ getPdfPath base
+  pageStr <-
+    run "pdftk" [pdf, "dump_data"] -|- run "awk" ["/NumberOfPages/{print $2}"]
+  return $
+    either error fst $ TR.decimal pageStr
+
+generateAllImgs :: String -> IO ()
+generateAllImgs base = shelly $ silently $ do
+  pages <- getPdfNumberOfPages' base
+  mapM_ (generateOneImg base) [1..pages]
 
 compileInvalidCode :: String -> IO T.Text
 compileInvalidCode base = shelly $ silently $ do

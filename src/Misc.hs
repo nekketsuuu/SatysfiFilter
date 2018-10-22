@@ -50,5 +50,5 @@ snipCode contents =
   where
     ls = lines contents
     slice from to xs = take (to - from) $ drop from $ xs
-    begin = 1 + (fromMaybe (-1) $ findIndex (\l -> isSpecialComment "BEGIN" $ T.pack l) ls)
-    end = fromMaybe (1 + length ls) $ findIndex (\l -> isSpecialComment "END" $ T.pack l) ls
+    begin = 1 + (fromMaybe (-1) $ findIndex (isSpecialComment "BEGIN" . T.pack ) ls)
+    end = fromMaybe (1 + length ls) $ findIndex (isSpecialComment "END" . T.pack) ls

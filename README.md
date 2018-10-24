@@ -1,6 +1,6 @@
 # SatysfiFilter
 
-A Pandoc filter to be used at <https://github.com/nekketsuuu/satysfi-my-soul>.
+A Pandoc filter used at <https://github.com/nekketsuuu/satysfi-my-soul>.
 
 This filter adds compilation-result images of SATySFi code blocks.
 

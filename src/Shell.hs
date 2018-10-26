@@ -89,7 +89,11 @@ getSatysfiVersion = do
 
 saveCode :: String -> String -> IO ()
 saveCode base contents =
-  writeFile (getSatyPath base) contents
+  writeFile (getSatyPath base) contents'
+  where
+    contents' =
+      if last contents == '\n' then contents
+      else contents ++ "\n"
 
 compileCode :: String -> IO ()
 compileCode base = shelly $ silently $ do
